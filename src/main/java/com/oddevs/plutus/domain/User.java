@@ -1,4 +1,4 @@
-package com.oddevs.plutus.model;
+package com.oddevs.plutus.domain;
 
 import java.io.Serializable;
 import java.util.Date;

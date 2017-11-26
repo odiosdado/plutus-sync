@@ -1,4 +1,4 @@
-package com.oddevs.plutus.model;
+package com.oddevs.plutus.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -22,11 +22,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "plutus_score")
+@Table(name = "stock_history")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"created"}, 
         allowGetters = true)
-public class PlutusScore implements Serializable  {
+public class StockHistory implements Serializable  {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -46,11 +46,14 @@ public class PlutusScore implements Serializable  {
 	
 	private BigDecimal dividend;
 	
+	@Column(name="plutus_score")
+	private BigDecimal plutusScore;
+	
 	@Column(nullable = false, updatable = false, name = "created")
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
     private Date created;
-
+	
 	public Long getId() {
 		return id;
 	}
@@ -105,5 +108,13 @@ public class PlutusScore implements Serializable  {
 
 	public void setCreated(Date created) {
 		this.created = created;
+	}
+
+	public BigDecimal getPlutusScore() {
+		return plutusScore;
+	}
+
+	public void setPlutusScore(BigDecimal plutusScore) {
+		this.plutusScore = plutusScore;
 	}
 }

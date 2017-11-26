@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oddevs.plutus.model.User;
+import com.oddevs.plutus.domain.User;
 import com.oddevs.plutus.repository.UserRepository;
 
 @RestController

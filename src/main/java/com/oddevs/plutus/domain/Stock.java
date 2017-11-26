@@ -1,4 +1,4 @@
-package com.oddevs.plutus.model;
+package com.oddevs.plutus.domain;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "stock")
-@JsonIgnoreProperties(value = { "plutusScore" }, allowSetters = true)
+@JsonIgnoreProperties(value = { "stockHistory" }, allowSetters = true)
 public class Stock implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -37,7 +37,7 @@ public class Stock implements Serializable {
 	private String company;
 
 	@OneToMany(mappedBy = "stock", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private Set<PlutusScore> plutusScore;
+	private Set<StockHistory> stockHistory;
 
 	public Long getId() {
 		return id;
@@ -79,11 +79,11 @@ public class Stock implements Serializable {
 		this.company = company;
 	}
 
-	public Set<PlutusScore> getPlutusScore() {
-		return plutusScore;
+	public Set<StockHistory> getStockHistory() {
+		return stockHistory;
 	}
 
-	public void setPlutusScore(Set<PlutusScore> plutusScore) {
-		this.plutusScore = plutusScore;
+	public void setStockHistory(Set<StockHistory> stockHistory) {
+		this.stockHistory = stockHistory;
 	}
 }
