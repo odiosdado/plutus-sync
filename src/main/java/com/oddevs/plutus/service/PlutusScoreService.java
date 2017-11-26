@@ -9,5 +9,6 @@ public interface PlutusScoreService {
 
 	List<StockHistory> findTop(int top);
 	List<StockHistory> findByRange(BigDecimal begin, BigDecimal end);
+	StockHistory findLatestByStockId(Long stockId);
 	
 }

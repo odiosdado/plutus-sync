@@ -42,4 +42,14 @@ public class PlutusScoreImpl implements PlutusScoreService {
 		query.setParameter(2, end);
 		return query.getResultList();
 	}
+
+	@Override
+	public StockHistory findLatestByStockId(Long stockId) {
+		TypedQuery<StockHistory> query = 
+				em.createQuery("select a from StockHistory a "
+						+ "where a.stock.id = ?1 order by a.id desc", StockHistory.class);
+		query.setParameter(1, stockId);
+		query.setMaxResults(1);
+		return query.getSingleResult();
+	}
 }
