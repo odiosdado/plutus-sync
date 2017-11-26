@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,36 +14,31 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotBlank;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "stock")
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
+@JsonIgnoreProperties(value = { "plutusScore" }, allowSetters = true)
 public class Stock implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-	
+	private Long id;
+
 	@NotBlank
 	private String symbol;
-	
+
 	@NotBlank
 	private String size;
-	
+
 	@NotBlank
 	private String sector;
-	
+
 	@NotBlank
 	private String company;
-	
-    @OneToMany(
-            mappedBy = "stock", 
-            cascade = CascadeType.ALL, 
-            orphanRemoval = true
-        )
+
+	@OneToMany(mappedBy = "stock", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<PlutusScore> plutusScore;
-	
+
 	public Long getId() {
 		return id;
 	}

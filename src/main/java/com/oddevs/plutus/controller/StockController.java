@@ -15,7 +15,7 @@ import com.oddevs.plutus.repository.StockRepository;
 public class StockController {
 
 	@Autowired
-   StockRepository stockRepository;
+	StockRepository stockRepository;
 	
 	@GetMapping("/stocks")
 	public List<Stock> getAllStocks() {
