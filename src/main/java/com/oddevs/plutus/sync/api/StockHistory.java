@@ -6,10 +6,10 @@ public class StockHistory {
 
 	private Long id;
 	private Stock stock;
-	private BigDecimal dividendShare;
 	private BigDecimal price;
 	private BigDecimal bookValue;
 	private BigDecimal dividend;
+	private BigDecimal earnings;
 	private BigDecimal plutusScore;
 	
 	public Long getId() {
@@ -23,12 +23,6 @@ public class StockHistory {
 	}
 	public void setStock(Stock stock) {
 		this.stock = stock;
-	}
-	public BigDecimal getDividendShare() {
-		return dividendShare;
-	}
-	public void setDividendShare(BigDecimal dividendShare) {
-		this.dividendShare = dividendShare;
 	}
 	public BigDecimal getPrice() {
 		return price;
@@ -53,5 +47,11 @@ public class StockHistory {
 	}
 	public void setPlutusScore(BigDecimal plutusScore) {
 		this.plutusScore = plutusScore;
+	}
+	public BigDecimal getEarnings() {
+		return earnings;
+	}
+	public void setEarnings(BigDecimal earnings) {
+		this.earnings = earnings;
 	}
 }

@@ -2,9 +2,7 @@ package com.oddevs.plutus.sync.iexchange;
 
 import java.math.BigDecimal;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Earning {
 
 	private BigDecimal actualEPS;
@@ -22,8 +20,7 @@ public class Earning {
 		return EPSReportDate;
 	}
 
-	public void setEPSReportDate(String ePSReportDate) {
-		EPSReportDate = ePSReportDate;
+	public void setEPSReportDate(String EPSReportDate) {
+		this.EPSReportDate = EPSReportDate;
 	}
-	
 }
