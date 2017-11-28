@@ -36,15 +36,14 @@ public class StockHistory implements Serializable  {
     @JoinColumn(name = "stock_id")
     private Stock stock;
 	
-	@Column(name="dividend_share")
-	private BigDecimal dividendShare;
-	
 	private BigDecimal price;
 	
 	@Column(name="book_value")
 	private BigDecimal bookValue;
 	
 	private BigDecimal dividend;
+	
+	private BigDecimal earnings;
 	
 	@Column(name="plutus_score")
 	private BigDecimal plutusScore;
@@ -68,14 +67,6 @@ public class StockHistory implements Serializable  {
 
 	public void setStock(Stock stock) {
 		this.stock = stock;
-	}
-
-	public BigDecimal getDividendShare() {
-		return dividendShare;
-	}
-
-	public void setDividendShare(BigDecimal dividendShare) {
-		this.dividendShare = dividendShare;
 	}
 
 	public BigDecimal getPrice() {
@@ -116,5 +107,13 @@ public class StockHistory implements Serializable  {
 
 	public void setPlutusScore(BigDecimal plutusScore) {
 		this.plutusScore = plutusScore;
+	}
+
+	public BigDecimal getEarnings() {
+		return earnings;
+	}
+
+	public void setEarnings(BigDecimal earnings) {
+		this.earnings = earnings;
 	}
 }

@@ -2,10 +2,14 @@ package com.oddevs.plutus.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.oddevs.plutus.domain.Stock;
@@ -43,5 +47,10 @@ public class StockController {
 	        return ResponseEntity.notFound().build();
 	    }
 	    return ResponseEntity.ok().body(plutusScore);
+	}
+	
+	@PostMapping("/stocks")
+	public Stock createStock(@Valid @RequestBody Stock stock) {
+		return stockRepository.save(stock);
 	}
 }

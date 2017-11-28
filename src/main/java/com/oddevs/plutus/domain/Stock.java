@@ -26,13 +26,7 @@ public class Stock implements Serializable {
 
 	@NotBlank
 	private String symbol;
-
-	@NotBlank
-	private String size;
-
-	@NotBlank
-	private String sector;
-
+	
 	@NotBlank
 	private String company;
 
@@ -42,7 +36,7 @@ public class Stock implements Serializable {
 	public Long getId() {
 		return id;
 	}
-
+	
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -54,23 +48,7 @@ public class Stock implements Serializable {
 	public void setSymbol(String symbol) {
 		this.symbol = symbol;
 	}
-
-	public String getSize() {
-		return size;
-	}
-
-	public void setSize(String size) {
-		this.size = size;
-	}
-
-	public String getSector() {
-		return sector;
-	}
-
-	public void setSector(String sector) {
-		this.sector = sector;
-	}
-
+	
 	public String getCompany() {
 		return company;
 	}
