@@ -2,6 +2,7 @@ package com.oddevs.plutus.sync.api;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +14,12 @@ public class PlutusService {
 
 	RestTemplate restTemplate = new RestTemplate();
 	
+	@Value("${plutus.api.url}")
+	private String plutusApiUrl;
+	
 	public List<Stock> getStocks(){
 		ResponseEntity<List<Stock>> response = 
-				restTemplate.exchange("http://localhost:8080/stocks",
+				restTemplate.exchange(plutusApiUrl+"/stocks",
 				HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<Stock>>() {
 				});
@@ -23,12 +27,12 @@ public class PlutusService {
 	}
 	
 	public Stock saveStock(Stock stock){
-		return restTemplate.postForObject("http://localhost:8080/stocks", 
+		return restTemplate.postForObject(plutusApiUrl+"/stocks", 
 				stock, Stock.class);
 	}
 	
 	public StockHistory saveStockHistoryk(StockHistory history){
-		return restTemplate.postForObject("http://localhost:8080/stockHistory", 
+		return restTemplate.postForObject(plutusApiUrl+"/stockHistory", 
 				history, StockHistory.class);
 	}
 }
