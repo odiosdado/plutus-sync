@@ -35,7 +35,7 @@ public class ScheduledTask {
     @Autowired
     PlutusService plutusService;
     
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 45000000)
     public void runSync() {
         log.info("The time is now {}", dateFormat.format(new Date()));
         
