@@ -39,56 +39,63 @@ public class ScheduledTask {
     public void runSync() {
         log.info("The time is now {}", dateFormat.format(new Date()));
         
-        List<Symbol> symbols = iexchangeService.getSymbols();
-        List<Stock> stocks = plutusService.getStocks();
-        
-        Set<String> cachedSymbols = stocks.stream().map(Stock::getSymbol).collect(Collectors.toSet());
-        
-        for(Symbol s : symbols){
+        try {
         	
-        	if(!cachedSymbols.contains(s.getSymbol())){
-        		Stock stock = new Stock();
-        		stock.setCompany(s.getName().isEmpty()?"N/A":s.getName());
-        		stock.setSymbol(s.getSymbol());
-        		plutusService.saveStock(stock);
-        	}
-        }
+            List<Symbol> symbols = iexchangeService.getSymbols();
+            List<Stock> stocks = plutusService.getStocks();
+            
+            Set<String> cachedSymbols = stocks.stream().map(Stock::getSymbol).collect(Collectors.toSet());
+            
+            for(Symbol s : symbols){
+            	
+            	if(!cachedSymbols.contains(s.getSymbol())){
+            		Stock stock = new Stock();
+            		stock.setCompany(s.getName().isEmpty()?"N/A":s.getName());
+            		stock.setSymbol(s.getSymbol());
+            		plutusService.saveStock(stock);
+            	}
+            }
+            
+            stocks = plutusService.getStocks();
+            for(Stock stock : stocks){
+            	
+            	try {
+            		
+            		Earning earning = iexchangeService.getLatestEarnings(stock.getSymbol());
+                	List<Dividends> dividends = iexchangeService.getDividends(stock.getSymbol());
+                	BigDecimal price = iexchangeService.getPrice(stock.getSymbol());
+                	Stats stats = iexchangeService.getStats(stock.getSymbol());
+                	
+                	Dividends dividend = dividends.get(0);
+                	
+                	StockHistory history = new StockHistory();
+                	history.setStock(stock);
+                	history.setPrice(price);
+                	history.setDividend(dividend.getAmount());
+                	history.setEarnings(earning.getActualEPS());
+                	history.setBookValue(stats.getPriceToBook());
+                	
+                	log.info("company: "+stock.getCompany()+" symbol: "+stock.getSymbol());
+                	log.info("getActualEPS: "+earning.getActualEPS());
+                	log.info("dividend: "+dividend.getAmount());
+                	log.info("getPriceToBook: "+stats.getPriceToBook());
+                	
+                	BigDecimal plutusScore = (earning.getActualEPS()
+                			.add(dividend.getAmount())
+                			.divide(stats.getPriceToBook(), RoundingMode.HALF_EVEN));
+                	history.setPlutusScore(plutusScore);
+                	
+                	plutusService.saveStockHistoryk(history);
+                	
+            	} catch (Exception e){
+            		log.error("Error in sync with stock "+stock.getSymbol(),e);
+            	}
+            	
+            }
+            
+        } catch (Exception e){
+    		log.error("Error in sync ",e);
+    	}
         
-        stocks = plutusService.getStocks();
-        for(Stock stock : stocks){
-        	
-        	try {
-        		
-        		Earning earning = iexchangeService.getLatestEarnings(stock.getSymbol());
-            	List<Dividends> dividends = iexchangeService.getDividends(stock.getSymbol());
-            	BigDecimal price = iexchangeService.getPrice(stock.getSymbol());
-            	Stats stats = iexchangeService.getStats(stock.getSymbol());
-            	
-            	Dividends dividend = dividends.get(0);
-            	
-            	StockHistory history = new StockHistory();
-            	history.setStock(stock);
-            	history.setPrice(price);
-            	history.setDividend(dividend.getAmount());
-            	history.setEarnings(earning.getActualEPS());
-            	history.setBookValue(stats.getPriceToBook());
-            	
-            	log.info("company: "+stock.getCompany()+" symbol: "+stock.getSymbol());
-            	log.info("getActualEPS: "+earning.getActualEPS());
-            	log.info("dividend: "+dividend.getAmount());
-            	log.info("getPriceToBook: "+stats.getPriceToBook());
-            	
-            	BigDecimal plutusScore = (earning.getActualEPS()
-            			.add(dividend.getAmount())
-            			.divide(stats.getPriceToBook(), RoundingMode.HALF_EVEN));
-            	history.setPlutusScore(plutusScore);
-            	
-            	plutusService.saveStockHistoryk(history);
-            	
-        	} catch (Exception e){
-        		log.error("Error in sync with stock "+stock.getSymbol(),e);
-        	}
-        	
-        }
     }
 }

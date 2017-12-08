@@ -37,7 +37,7 @@
 				<artifactId>dockerfile-maven-plugin</artifactId>
 				<version>1.3.6</version>
 				<configuration>
-					<repository>plutus/${project.artifactId}</repository>
+					<repository>odiosdado/${project.artifactId}</repository>
 					<buildArgs>
 						<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
 					</buildArgs>
