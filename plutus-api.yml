@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: plutus-api
+  labels:
+    app: plutus-api
+    service: plutus-api
+spec:
+  ports:
+  - port: 80
+    name: http
+  selector:
+    app: plutus-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plutus-api-v1
+  labels:
+    app: plutus-api
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: plutus-api
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: plutus-api
+        version: v1
+    spec:
+      containers:
+      - name: plutus-api
+        image: odiosdado/oddevs:plutus-api-4
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        env:
+          - name: PLUTUS_JDBC_URL
+            value: "jdbc://plutus-db/plutus"
+          - name: PLUTUS_JDBC_USER
+            value: "svcplutus"
+          - name: PLUTUS_JDBC_PASS
+            value: "N00dle1234"
+---
+  apiVersion: networking.istio.io/v1alpha3
+  kind: Gateway
+  metadata:
+    name: plutus-api-gateway
+  spec:
+    selector:
+      istio: ingressgateway # use Istio default gateway implementation
+    servers:
+    - port:
+        number: 80
+        name: HTTP
+        protocol: HTTP
+      hosts:
+      - "api.plutus.oddevs.com"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: plutus-api
+spec:
+  hosts:
+  - "api.plutus.oddevs.com"
+  gateways:
+  - plutus-api # define gateway name
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: plutus-api # Backend service name
+        port:
+          number: 80 # Backend service port
