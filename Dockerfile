@@ -25,5 +25,4 @@ FROM openjdk:8-jdk-alpine
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 COPY --from=build /usr/src/app/target/plutus-api-*.jar /usr/src/app/plutus-api.jar
-COPY src/main/resources/application.properties /usr/src/app/application.properties
-CMD ["java","-Djava.security.egd=file:/dev/./urandom","-jar","-Dspring.config.additional-location=/usr/src/app/application.properties","plutus-api.jar"]
+CMD ["java","-Djava.security.egd=file:/dev/./urandom","-jar","plutus-api.jar"]
