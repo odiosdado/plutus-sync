@@ -16,5 +16,9 @@ spec:
         app: plutus-sync
     spec:
       containers:
-      - image: odiosdado/oddevs:plutus-sync-1
-        name: plutus-sync
+      - name: plutus-sync
+        image: odiosdado/oddevs:plutus-sync-5
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: PLUTUS_API_URL
+            value: "http://plutus-api"
