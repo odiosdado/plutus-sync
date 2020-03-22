@@ -24,5 +24,5 @@ RUN mvn -T 1C package
 FROM openjdk:8-jdk-alpine
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
-COPY --from=build /usr/src/app/target/plutus-api-*.jar /usr/src/app/plutus-api.jar
+COPY --from=build /usr/src/app/target/plutus-sync-*.jar /usr/src/app/plutus-sync.jar
 CMD ["java","-Djava.security.egd=file:/dev/./urandom","-jar","plutus-sync.jar"]
