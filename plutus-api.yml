@@ -6,8 +6,10 @@ metadata:
     app: plutus-api
 spec:
   ports:
-  - port: 80
-    name: http
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 8080
   selector:
     app: plutus-api
 ---
@@ -35,7 +37,7 @@ spec:
         image: odiosdado/oddevs:plutus-api-5
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 80
+        - containerPort: 8080
         env:
           - name: PLUTUS_JDBC_URL
             value: "jdbc:mysql://plutus-db/plutus?autoReconnect=true&useSSL=false"
