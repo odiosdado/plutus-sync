@@ -3,8 +3,7 @@ kind: Service
 metadata:
   name: plutus-api
   labels:
-    app: plutus
-    service: plutus-api
+    app: plutus-api
 spec:
   ports:
   - port: 80
@@ -15,50 +14,35 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: plutus-api-v1
+  name: plutus-api
   labels:
-    app: plutus
+    app: plutus-api
     version: v1
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: plutus
+      app: plutus-api
       version: v1
   template:
     metadata:
       labels:
-        app: plutus
+        app: plutus-api
         version: v1
     spec:
       containers:
       - name: plutus-api
-        image: odiosdado/oddevs:plutus-api-4
+        image: odiosdado/oddevs:plutus-api-5
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
         env:
           - name: PLUTUS_JDBC_URL
-            value: "jdbc:mysql://plutus-db:3306/plutus?autoReconnect=true&useSSL=false"
+            value: "jdbc:mysql://plutus-db/plutus?autoReconnect=true&useSSL=false"
           - name: PLUTUS_JDBC_USER
             value: "svcplutus"
           - name: PLUTUS_JDBC_PASS
             value: "N00dle1234"
----
-  apiVersion: networking.istio.io/v1alpha3
-  kind: Gateway
-  metadata:
-    name: plutus-api-gateway
-  spec:
-    selector:
-      istio: ingressgateway # use Istio default gateway implementation
-    servers:
-    - port:
-        number: 80
-        name: HTTP
-        protocol: HTTP
-      hosts:
-      - "api.plutus.oddevs.com"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -66,9 +50,9 @@ metadata:
   name: plutus-api
 spec:
   hosts:
-  - "api.plutus.oddevs.com"
+  - api.plutus.oddevs.com
   gateways:
-  - plutus-api # define gateway name
+  - istio-system/oddevs-gateway # define gateway name
   http:
   - match:
     - uri:
