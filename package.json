@@ -1,0 +1,42 @@
+{
+  "name": "plutus-api",
+  "version": "1.0.0",
+  "description": "API for plutus",
+  "main": "index.js",
+  "scripts": {
+    "dev:build": "./node_modules/.bin/babel src --out-dir dist",
+    "dev:start": "nodemon --exec babel-node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://odiosdado@bitbucket.org/oddevs/drivlab-api.git"
+  },
+  "author": "oddevs",
+  "license": "ISC",
+  "homepage": "https://drivlab.com",
+  "dependencies": {
+    "app-root-path": "^2.2.1",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "custom-env": "^1.0.0",
+    "dotenv": "^8.0.0",
+    "express": "^4.16.4",
+    "express-winston": "^3.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.4.6",
+    "passport": "^0.4.0",
+    "passport-facebook": "^3.0.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-google-token": "^0.1.2",
+    "passport-jwt": "^4.0.0",
+    "request": "^2.88.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.4.4",
+    "@babel/node": "^7.2.2",
+    "nodemon": "^1.19.0",
+    "@babel/preset-env": "^7.4.4"
+  }
+}
