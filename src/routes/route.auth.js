@@ -1,22 +1,15 @@
-'use strict';
+import express from 'express';
+import passport from '../authentication/passport';
+import * as authController from '../controllers/controller.auth';
 
-const express = require('express');
 const router = express.Router();
-const path = require('path');
-var passport = require('passport');
-var { generateToken, sendToken } = require('../utils/token.utils');
-require('../authentication/passport')();
 
-const authController = require('../controllers/controller.auth');
+router.get('/facebook/login', passport.authenticate('facebook'));
+router.get('/facebook/callback', passport.authenticate('facebook'), authController.generateToken);
+router.post('/facebook/token', passport.authenticate('facebook-token'), authController.generateToken);
 
-router.get('/facebook/login', passport.authenticate('facebook', { scope: ['email'] }));
-router.get('/facebook/callback', passport.authenticate('facebook'), generateToken, sendToken);
+router.get('/google/login', passport.authenticate('google'));
+router.get('/google/callback', passport.authenticate('google'), authController.generateToken);
+router.post('/google/token', passport.authenticate('google-token'), authController.generateToken);
 
-router.get('/google/login', passport.authenticate('google',
-    {
-        scope: ['profile'], accessType: 'offline',
-        prompt: 'consent'
-    }));
-router.get('/google/callback', passport.authenticate('google'), authController.googleLogin, generateToken, sendToken);
-
-module.exports = router;
+export default router;

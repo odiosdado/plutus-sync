@@ -1,16 +1,11 @@
-'use strict';
-
 import express from 'express';
-import user from './route.user';
 import auth from './route.auth';
-
-import passport from 'passport';
-require('../authentication/passport')();
+import user from './route.user';
+import passport from '../authentication/passport';
 
 const router = express.Router();
 
-router.use('/vehicles', passport.authenticate('jwt', { session: false }), user);
-router.use('/users', passport.authenticate('jwt', { session: false }), user);
 router.use('/auth', auth);
+router.use('/users', /*passport.authenticate('jwt'),*/ user);
 
-module.exports = router
+export default router;

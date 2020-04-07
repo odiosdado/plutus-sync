@@ -1,93 +1,48 @@
-const User = require('../models/model.user');
+import User from '../models/model.user';
+import Algorithm from '../models/model.algorithm';
+import { handleResponse } from '../utils/helpers';
 
-exports.getUser = (req, res, next) => {  
+export const getUser = async (req, res) => {
 
-  User.findById(req.params.id, function (err, user) {
-    if(err) {
-      return next(err);
-    }
-    if(user){
-      res.send(user);
-    } else {
-      res.status(404).send({message: `User not found for ${decode.sub}`});
-    }
+  User.findById(req.params.id, (err, user) => {
+    return handleResponse(err, user, req, res);
   });
 }
 
-exports.updateUser = (req, res, next) => {
+export const updateUser = async (req, res) => {
 
-  User.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true}, function(err, user) {
-    if(err) {
-      return next(err);
-    }
-    if(user){
-      res.send(user);
-    } else {
-      res.status(404).send({message: `User not found for ${req.params.id}`});
-    }
+  User.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true }, (err, user) => {
+    return handleResponse(err, user, req, res);
   });
 }
 
-exports.deleteUser = (req, res, next) => {
+export const deleteUser = async (req, res) => {
 
-  User.findByIdAndRemove(req.params.id, function(err) {
-    if(err) {
-      return next(err);
-    }
-    res.send();
+  User.findByIdAndRemove(req.params.id, (err, user) => {
+    return handleResponse(err, user, req, res);
   });
 }
 
-exports.addVehicle = (req, res, next) => {
+export const getUserItems = async (req, res) => {
 
-  User.findByIdAndUpdate(req.params.id,
-    {$push: {vehicles: req.body}},
-    {new: true},
-    function(err, user) {
-      if(err){
-        return next(err)
-      }
-      res.send(user);
+  Item.find({ user: req.params.id }, (err, items) => {
+    return handleResponse(err, items, req, res);
   });
 }
 
-exports.deleteVehicle = (req, res, next) => {
-  
-  User.findByIdAndUpdate(req.params.id,
-    {$pull: {vehicles: {'_id': req.params.vehicle_id}}},
-    {new: true},
-    function(err, user) {
-      if(err){
-        console.log(err)
-        return next(err)
-      }
-      if(user){
-        res.send(user);
-      } else {
-        res.status(404).send({message: `User not found for ${req.params.id}`});
-      }
+export const createUserAlgorithm = async (req, res) => {
+
+  const userId = req.params.id;
+  const { body } = req;
+
+  Algorithm.createAlgorithm(userId, body, (err, item) => {
+    return handleResponse(err, item, req, res);
   });
 }
 
-exports.addBuild = (req, res, next) => {
-  User.collection.update({
-    "_id" : req.params.id,
-    "vehicles._id": req.params.vehicle_id
-  },
-  {
-    $push : { "vehicles.$$.builds" : req.body}
-  },
-  false,
-  true
-  );
+export const getUserAlgorithms = async (req, res) => {
 
-  /*User.findByIdAndUpdate(req.params.id,
-    {$push: {vehicles.$.brands: req.body}},
-    {new: true},
-    function(err, user) {
-      if(err){
-        return next(err)
-      }
-      res.send(user);
-  });*/
+  Algorithm.find({ user: req.params.id }, (err, algorithms) => {
+    return handleResponse(err, algorithms, req, res);
+  });
 }

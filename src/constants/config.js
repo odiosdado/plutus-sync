@@ -1,19 +1,24 @@
 'use strict'
 
-import appRoot from 'app-root-path'
 import dotenv from 'dotenv'
 dotenv.config();
 
 const config = {
   
   mongodb: {
-    uri : process.env.MONGODB_URI
+    uri : process.env.MONGODB_URI,
+    options: {
+      useNewUrlParser: true, 
+      useUnifiedTopology: true,
+      user: process.env.MONGODB_USER,
+      pass: process.env.MONGODB_PASS
+    }
   },
 
   jwt : {
     secret : process.env.JWT_SECRET,
-    issuer : 'drivlab.com',
-    audience : 'drivlab.com',
+    issuer : 'plutus.com',
+    audience : 'plutus.com',
     expiresIn : 3600
   },
 
@@ -31,15 +36,6 @@ const config = {
   },
   
   winston : {
-    file : {
-      level : process.env.LOGGER_LEVEL,
-      filename : `${appRoot}/logs/app.log`,
-      handleExceptions: true,
-      json: true,
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
-      colorize: false
-    },
     console : {
       level : process.env.LOGGER_LEVEL,
       handleExceptions: true,
@@ -48,5 +44,4 @@ const config = {
     }
   }
 };
-
-module.exports = config;
+export default config;

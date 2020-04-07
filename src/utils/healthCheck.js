@@ -1,5 +1,3 @@
-'use strict'
-
 import express from 'express';
 import mongoose from 'mongoose';
 import logger from '../logger';
@@ -23,4 +21,4 @@ healthCheck.get('/', (req, res, next) => {
     }
 });
 
-module.exports = healthCheck
+export default healthCheck;

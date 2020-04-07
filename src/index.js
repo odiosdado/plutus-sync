@@ -1,15 +1,13 @@
-'use strict'
-
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import passport from 'passport'
-import routes from './routes'
-import database from './database/database'
+import router from './routes'
+import setupConnection from './database'
 import logger from './logger'
 import healthCheck from './utils/healthCheck';
 
-database.setupConnection();
+setupConnection();
 
 const app = express();
 
@@ -21,7 +19,7 @@ app.use(passport.initialize());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/healthCheck', healthCheck);
-app.use('/v1/', routes);
+app.use('/v1/', router);
 
 app.listen(3000, () => {
   logger.log('debug','App running on port: 3000');

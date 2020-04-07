@@ -1,10 +1,11 @@
+import mongoose from 'mongoose';
 import config from '../constants/config';
 
-const mongoose = require('mongoose');
-
-exports.setupConnection = () => {
-  mongoose.connect(config.mongodb.uri, {useNewUrlParser: true});
+const setupConnection = async () => {
+  mongoose.connect(config.mongodb.uri, config.mongodb.options);
   mongoose.Promise = global.Promise;
   let db = mongoose.connection;
   db.on('Error', console.error.bind(console, 'MongoDB connection error:'));
 }
+
+export default setupConnection;

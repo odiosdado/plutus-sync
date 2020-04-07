@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 import logger from '../logger';
+const { Schema } = mongoose;
 
-let UserSchema = new mongoose.Schema({
+let UserSchema = new Schema({
     email: {
         type: String, required: true,
         trim: true, unique: true,
@@ -21,28 +22,19 @@ let UserSchema = new mongoose.Schema({
         },
         select: false
     },
-    vehicles : [{
-        year : Number,
-        make : String,
-        model : String,
-        trim : String,
-        mileage : Number,
-        vin : String,
-        builds: [{
-            name: String,
-            parts : [{
-                brand: String,
-                number: String,
-                name: String,
-                price: Number,
-                website: String,
-                installedAt: Date
-            }]
-        }]
-      }]
+    algorithms: [
+        { type: Schema.Types.ObjectId, ref: 'Algorithm' }
+    ],
 }, { timestamps: true});
 
-UserSchema.set('toJSON', {getters: true, virtuals: true});
+UserSchema.options.toJSON = {
+    transform: (doc, ret, options) => {
+        ret.id = ret._id;
+        delete ret._id;
+        delete ret.__v;
+        return ret;
+    }
+};
 
 UserSchema.statics.upsertFbUser = function(accessToken, refreshToken, profile, callback) {
     var that = this;
@@ -91,6 +83,7 @@ UserSchema.statics.upsertGoogleUser = function (accessToken, refreshToken, profi
         }
         if (!user) {
             logger.log('info', `No user found for Google profile id ${profile.id}, creating new`);
+            logger.log('info', { profile })
             var newUser = new that({
                 fullName: profile.displayName,
                 email: profile.emails[0].value,
@@ -115,17 +108,27 @@ UserSchema.statics.upsertGoogleUser = function (accessToken, refreshToken, profi
     });
 };
 
-UserSchema.statics.findOneFromJwt = function(jwt_payload, callback) {
+UserSchema.statics.findOneFromJwt = function (jwt_payload, callback) {
     var that = this;
-    return this.findById(jwt_payload.sub, function(err, user) {
+    return this.findById(jwt_payload.sub, function (err, user) {
         logger.log('debug', `Recieved jwtPayload: ${jwt_payload}`);
-        if(err) {
+        if (err) {
             logger.log('error', `Error finding user with jwtPayload: ${jwt_payload} error: ${error}`);
             return callback(err, null)
         }
-        logger.log('debug', `User found for jwtPayload: ${jwt_payload} user: ${user}`);
+        logger.log('debug', { 'User found for:': jwt_payload, user });
         return callback(err, user);
     });
-  };
+};
 
-module.exports = mongoose.model('User', UserSchema);
+UserSchema.statics.addAlgorithm = function (userId, algorithmId, callback) {
+    return this.findOneAndUpdate(userId, { $push: { algorithms: algorithmId } }, { new: true }, (err, user) => {
+        if (err) {
+            logger.log('error', `Error saving algorithm for user, error: ${error}`);
+            return callback(err, null)
+        }
+        return callback(null, user);
+    });
+};
+
+export default mongoose.model('User', UserSchema);
