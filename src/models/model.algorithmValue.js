@@ -30,7 +30,7 @@ AlgorithmValueSchema.statics.createAlgorithmValue = function (algorithmId, body,
     const algorithmValue = new that({
         value: body.value,
         stockData: body.stockData,
-        algorithmId: body.stocks,
+        algorithm: algorithmId,
     });
     algorithmValue.save((error, algorithmValue) => {
         if (error) {

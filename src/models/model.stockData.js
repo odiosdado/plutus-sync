@@ -23,4 +23,19 @@ StockDataSchema.options.toJSON = {
     }
 };
 
+StockDataSchema.statics.createStockData = function (stockId, body, callback) {
+    const that = this;
+    const stockData = new that({
+        plutusScore: body.plutusScore,
+        stock: stockId
+    });
+    stockData.save((error, stockData) => {
+        if (error) {
+            logger.log('error', `Error saving new stock data error: ${error}`);
+            return callback(error);
+        }
+        return callback(null, stockData);
+    });
+};
+
 export default mongoose.model('StockData', StockDataSchema);
