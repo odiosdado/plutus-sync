@@ -4,7 +4,19 @@ import Stock from '../models/model.stock';
 const { Schema } = mongoose;
 
 const StockDataSchema = new Schema({
-    plutusScore: {
+    netIncome: {
+        type: Schema.Types.Decimal128
+    },
+    assets: {
+        type: Schema.Types.Decimal128
+    },
+    liabilities: {
+        type: Schema.Types.Decimal128        
+    },
+    shares: {
+        type: Schema.Types.Decimal128
+    },
+    price: {
         type: Schema.Types.Decimal128
     },
     stock: {
@@ -26,7 +38,7 @@ StockDataSchema.options.toJSON = {
 StockDataSchema.statics.createStockData = function (stockId, body, callback) {
     const that = this;
     const stockData = new that({
-        plutusScore: body.plutusScore,
+        ... body,
         stock: stockId
     });
     stockData.save((error, stockData) => {
