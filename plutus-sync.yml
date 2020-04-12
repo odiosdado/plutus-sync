@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plutus-sync
+  labels:
+    app: plutus-sync
+spec:
+  selector:
+    matchLabels:
+      app: plutus-sync
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: plutus-sync
+    spec:
+      containers:
+      - name: plutus-sync
+        image: odiosdado/oddevs:plutus-sync-4
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: PLUTUS_API_URL
+            value: "http://plutus-api"
