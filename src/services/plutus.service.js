@@ -6,6 +6,7 @@ axios.interceptors.response.use(function (response) {
   }, function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
+    console.log(error)
     return Promise.reject(error);
   });
 
@@ -48,29 +49,49 @@ class PlutusService {
 
     async aggregateAlgoritmValues(schedule) {
         const algorithms = await this.getAlgorithms(schedule);
-        algorithms.forEach((algorithm) => {
-            if (algorithm.allStocks) {
+        const stocks = await this.getStocks();
 
-            }
+        stocks.forEach((stock) => {
+            algorithms.forEach(async (algorithm) => {
+                if (algorithm.allStocks || algorithm.getStocks().includes(stock.id)) {
+                    console.log({ stock, algorithm })
+                    const algorithmValue = await this.calculateAlgorithmValue(stock, algorithm);
+                    console.log({ 'id': algorithm.id, algorithmValue });
+                    await this.createAlgorithmValue(algorithm.id, algorithmValue)
+                }
+            });
         });
     }
 
     async calculateAlgorithmValue(stock, algorithm) {
         const { latestStockData } = stock;
         const { formula } = algorithm;
+        const value = await this.getValueFromFormula(latestStockData, formula);
+        const algorithmValue = {
+            value,
+            stockData: latestStockData.id
+        }
+        console.log({ algorithmValue })
+        return algorithmValue;
+    }
+
+    async getValueFromFormula(stockData, formula) {
         let codeBlock = '';
-        for(let key in latestStockData) {
-            if(latestStockData.hasOwnProperty(key)) {
-                const val = latestStockData[key];
+        for(let key in stockData) {
+            if(stockData.hasOwnProperty(key) && formula.includes(key)) {
+                const val = stockData[key];
                 console.log({ key, val });
-                codeBlock += ` const ${key}=${val};`;
+                codeBlock += ` const ${key}=${parseFloat(val)};`;
             }
         }
         let value = null;
         codeBlock += ` value = ${formula}`;
         console.log(codeBlock);
-        eval(codeBlock);
-        console.log({ value })
+        try {
+            eval(codeBlock);
+        } catch (error) {
+            console.error(error);
+        }
         return value;
     }
 }

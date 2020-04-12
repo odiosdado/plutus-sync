@@ -19,7 +19,7 @@ class FmpService {
 
     async getStockList() {
         const response = await this.instance.get('company/stock/list');
-        return response.data;
+        return response.data['symbolsList'];
     }
 
     async getIncomeStatement(symbol) {
@@ -47,7 +47,7 @@ class FmpService {
         const balanceSheet = await this.getBalanceSheet(symbol, 'quarter');
         const enterpriseValue = await this.getEnterpriseValue(symbol, 'quarter');
         const price = await this.getStockPrice(symbol);
-        
+
         return {
             netIncome: incomeStatement.financials[0]['Net Income'],
             assets: balanceSheet.financials[0]['Total assets'],

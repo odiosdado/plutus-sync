@@ -24,3 +24,9 @@ export const handleResponse = (err, doc, req, res) => {
     }
     return res.status(404).send({ message: `${req.params.id} not found` });
 }
+
+export const removeDuplicates = (arrayA, arrayB, prop) => {
+    return arrayA.filter(elem => {
+        return (arrayB.find(el => el[prop] === elem[prop]) ? null : elem)
+    });
+}
