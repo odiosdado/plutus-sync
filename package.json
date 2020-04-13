@@ -1,0 +1,40 @@
+{
+  "name": "plutus-sync",
+  "version": "1.0.0",
+  "description": "Sync (aggregator) for plutus",
+  "main": "index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/babel src --out-dir dist",
+    "test": "./node_modules/.bin/mocha --require @babel/register test/**/**test.js",
+    "lint": "",
+    "dev": "./node_modules/.bin/nodemon --exec babel-node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://odiosdado@bitbucket.org/oddevs/plutus-api.git"
+  },
+  "author": "oddevs",
+  "license": "ISC",
+  "homepage": "https://plutus.com",
+  "dependencies": {
+    "@babel/runtime": "^7.9.2",
+    "axios": "^0.19.2",
+    "dotenv": "^8.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.4.4",
+    "@babel/node": "^7.2.2",
+    "@babel/plugin-transform-runtime": "^7.9.0",
+    "@babel/preset-env": "^7.4.4",
+    "chai": "^4.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.1",
+    "mocha": "^7.1.1",
+    "nodemon": "^1.19.0",
+    "sinon": "^9.0.2"
+  }
+}

@@ -1,24 +1,21 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1beta1
+kind: CronJob
 metadata:
   name: plutus-sync
   labels:
     app: plutus-sync
 spec:
-  selector:
-    matchLabels:
-      app: plutus-sync
-  strategy:
-    type: Recreate
-  template:
-    metadata:
-      labels:
-        app: plutus-sync
+  schedule: "@midnight"
+  jobTemplate:
     spec:
-      containers:
-      - name: plutus-sync
-        image: odiosdado/oddevs:plutus-sync-4
-        imagePullPolicy: IfNotPresent
-        env:
-          - name: PLUTUS_API_URL
-            value: "http://plutus-api"
+      template:
+        spec:
+          containers:
+          - name: plutus-sync
+            image: odiosdado/oddevs:plutus-sync-20
+            imagePullPolicy: IfNotPresent
+            env:
+              - name: PLUTUS_BASE_URL
+                value: "http://plutus-api/v1/"
+              - name: FMP_BASE_URL
+                value: "https://financialmodelingprep.com/api/v3/"
