@@ -1,5 +1,6 @@
 import axios from 'axios';
 import config from '../constants/config';
+import logger from '../logger';
 
 axios.interceptors.response.use(function (response) {
     return response;
@@ -12,8 +13,7 @@ axios.interceptors.response.use(function (response) {
 class FmpService {
     constructor() {
         this.instance = axios.create({
-            baseURL: config.fmpApi.baseUrl,
-            timeout: 1000
+            baseURL: config.fmpApi.baseUrl
         });
     }
 
@@ -23,6 +23,7 @@ class FmpService {
     }
 
     async getIncomeStatement(symbol) {
+        logger.debug(`financials/income-statement/${symbol}`);
         const response = await this.instance.get(`financials/income-statement/${symbol}`);
         return response.data;
     }
@@ -43,17 +44,21 @@ class FmpService {
     }
 
     async getStockData(symbol) {
-        const incomeStatement = await this.getIncomeStatement(symbol);
-        const balanceSheet = await this.getBalanceSheet(symbol, 'quarter');
-        const enterpriseValue = await this.getEnterpriseValue(symbol, 'quarter');
-        const price = await this.getStockPrice(symbol);
-
-        return {
-            netIncome: incomeStatement.financials[0]['Net Income'],
-            assets: balanceSheet.financials[0]['Total assets'],
-            liabilites: balanceSheet.financials[0]['Total liabilities'],
-            shares: enterpriseValue.enterpriseValues[0]['Number of Shares'],
-            price: price.price
+        logger.debug({ symbol })
+        try {
+            const incomeStatement = await this.getIncomeStatement(symbol);
+            // const balanceSheet = await this.getBalanceSheet(symbol, 'quarter');
+            // const enterpriseValue = await this.getEnterpriseValue(symbol, 'quarter');
+            // const price = await this.getStockPrice(symbol);
+            return {
+                netIncome: incomeStatement.financials[0]['Net Income'],
+                assets: balanceSheet.financials[0]['Total assets'],
+                liabilites: balanceSheet.financials[0]['Total liabilities'],
+                shares: enterpriseValue.enterpriseValues[0]['Number of Shares'],
+                price: price.price
+            }
+        } catch (error) {
+            logger.error(error.message)
         }
     }
 }

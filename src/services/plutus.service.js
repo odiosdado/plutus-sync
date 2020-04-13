@@ -1,5 +1,6 @@
 import axios from 'axios';
 import config from '../constants/config';
+import logger from '../logger';
 
 axios.interceptors.response.use(function (response) {
     return response;
@@ -13,8 +14,7 @@ axios.interceptors.response.use(function (response) {
 class PlutusService {
     constructor() {
         this.instance = axios.create({
-            baseURL: config.plutusApi.baseUrl,
-            timeout: 1000
+            baseURL: config.plutusApi.baseUrl
         });
     }
 
@@ -29,6 +29,8 @@ class PlutusService {
     }
 
     async createStockData(stockId, stockData) {
+        const url = `stocks/${stockId}/stock-data`;
+        logger.debug({ 'createStockData:': { url, stockData }});
         const response = await this.instance.post(`stocks/${stockId}/stock-data`, stockData);
         return response.data;
     }
