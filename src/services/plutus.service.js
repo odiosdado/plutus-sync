@@ -52,17 +52,19 @@ class PlutusService {
     async aggregateAlgoritmValues(schedule) {
         const algorithms = await this.getAlgorithms(schedule);
         const stocks = await this.getStocks();
-
-        stocks.forEach((stock) => {
-            algorithms.forEach(async (algorithm) => {
+        for (const stock of stocks) {
+            for (const algorithm of algorithms) {
                 if (algorithm.allStocks || algorithm.getStocks().includes(stock.id)) {
-                    console.log({ stock, algorithm })
-                    const algorithmValue = await this.calculateAlgorithmValue(stock, algorithm);
-                    console.log({ 'id': algorithm.id, algorithmValue });
-                    await this.createAlgorithmValue(algorithm.id, algorithmValue)
+                    try {
+                        const algorithmValue = await this.calculateAlgorithmValue(stock, algorithm);
+                        logger.debug(`symbol: ${stock.symbol} algorithm value: ${algorithmValue}`);
+                        await this.createAlgorithmValue(algorithm.id, algorithmValue);
+                    } catch (error) {
+                        logger.error(error.message)
+                    }
                 }
-            });
-        });
+            };
+        };
     }
 
     async calculateAlgorithmValue(stock, algorithm) {
@@ -73,7 +75,6 @@ class PlutusService {
             value,
             stockData: latestStockData.id
         }
-        console.log({ algorithmValue })
         return algorithmValue;
     }
 
@@ -82,17 +83,16 @@ class PlutusService {
         for(let key in stockData) {
             if(stockData.hasOwnProperty(key) && formula.includes(key)) {
                 const val = stockData[key];
-                console.log({ key, val });
                 codeBlock += ` const ${key}=${parseFloat(val)};`;
             }
         }
         let value = null;
         codeBlock += ` value = ${formula}`;
-        console.log(codeBlock);
+        logger.debug(`codeBlock: ${codeBlock}`);
         try {
             eval(codeBlock);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
         }
         return value;
     }

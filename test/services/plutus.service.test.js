@@ -58,8 +58,8 @@ describe('# plutus.service', function(){
     describe('## calculateAlgorithmValue', function(){
         it('## should return a value when given stock data and an algorithm', async function(){
             const algorithm = {
-                //formula: '(netIncome / shares) / (((assets - liabilities)/shares)/price)'
-                formula: 'data'
+                formula: '(netIncome / shares) / (((assets - liabilities)/shares)/price)'
+                //formula: 'data'
             }
             const stock =  {
                 "name": "Apple",

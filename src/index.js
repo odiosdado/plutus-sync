@@ -13,34 +13,33 @@ async function loadStocks() {
   logger.debug(`FMP stocks: ${fmpStocks.length}`)
   logger.debug(`After removing duplicates: ${stocksToCreate.length}`)
 
-  stocksToCreate.forEach(async (stock) => {
+  for(const stock of stocksToCreate) {
     try {
       await plutusService.createStock(stock);
     } catch (error) {
       logger.error(error);
     }
-  });
+  };
 }
 
 async function loadStockData() {
   const plutusStocks = await plutusService.getStocks();
   logger.debug(`Loading new stock data`)
   logger.debug(`Plutus stocks: ${plutusStocks.length}`)
-  plutusStocks.forEach(async (stock) => {
+  for(const stock of plutusStocks) {
     try {
       const stockData = await fmpService.getStockData(stock.symbol);
-      logger.debug({ stockData });
-      // await plutusService.createStockData(stock.id, stockData);
+      await plutusService.createStockData(stock.id, stockData);
     } catch (error) {
       logger.error(error.message);
     }
-  });
+  };
 }
 
 async function loadAlgorithmValues() {
   logger.debug(`Loading new algorithm values`)
   try {
-    await plutusService.aggregateAlgoritmValues('quarter');
+    await plutusService.aggregateAlgoritmValues('quarterly');
   } catch (error) {
     logger.error(error);
   }
@@ -50,10 +49,10 @@ async function init() {
   try {
     await loadStocks();
     await loadStockData();
-    // await loadAlgorithmValues();
+    await loadAlgorithmValues();
   } catch (error) {
-    process.exit(1)
+    logger.error(error);
   }
 }
 
-init()
+init();
