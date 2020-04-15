@@ -16,3 +16,4 @@ spec:
             value: "http://plutus-api/v1/"
           - name: FMP_BASE_URL
             value: "https://financialmodelingprep.com/api/v3/"
+      restartPolicy: Never
