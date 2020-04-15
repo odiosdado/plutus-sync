@@ -22,12 +22,12 @@ pipelines:
           # push the new Docker image to the Docker registry
           - docker push $IMAGE_NAME
     - step:
-      name: Deploy
-      deployment: production
-      script:
-        - sed -i "s|{{image}}|$DOCKER_HUB_USERNAME/$DOCKER_HUB_REPO:plutus-sync-$BITBUCKET_BUILD_NUMBER|g" plutus-sync.yml
-        - pipe: atlassian/kubectl-run:1.1.2
-          variables:
-            KUBE_CONFIG: $KUBE_CONFIG
-            KUBECTL_COMMAND: 'apply'
-            RESOURCE_PATH: 'plutus-sync.yml'
+        name: Deploy
+        deployment: production
+        script:
+          - sed -i "s|{{image}}|$DOCKER_HUB_USERNAME/$DOCKER_HUB_REPO:plutus-sync-$BITBUCKET_BUILD_NUMBER|g" plutus-sync.yml
+          - pipe: atlassian/kubectl-run:1.1.2
+            variables:
+              KUBE_CONFIG: $KUBE_CONFIG
+              KUBECTL_COMMAND: 'apply'
+              RESOURCE_PATH: 'plutus-sync.yml'
