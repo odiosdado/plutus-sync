@@ -19,7 +19,6 @@ COPY --from=build /usr/src/app/node_modules /usr/src/app/node_modules
 COPY --from=build /usr/src/app/dist /usr/src/app/
 
 RUN chown node:node /usr/src/app
-
+RUN apk add curl
 USER node
 EXPOSE 3000
-CMD ["node","index.js"]
