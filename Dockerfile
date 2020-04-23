@@ -17,8 +17,9 @@ WORKDIR /usr/src/app
 
 COPY --from=build /usr/src/app/node_modules /usr/src/app/node_modules
 COPY --from=build /usr/src/app/dist /usr/src/app/
-
-RUN chown node:node /usr/src/app
+COPY ./start.sh /usr/src/app
+RUN chmod u+x /usr/src/app/start.sh &&\
+    chown node:node /usr/src/app
 RUN apk add curl
 USER node
 EXPOSE 3000
