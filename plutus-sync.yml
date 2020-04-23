@@ -1,22 +1,25 @@
-apiVersion: batch/v1
-kind: Job
+apiVersion: batch/v1beta1
+kind: CronJob
 metadata:
   name: plutus-sync
   labels:
     app: plutus-sync
 spec:
-  template:
+  schedule: '@midnight'
+  jobTemplate:
     spec:
-      containers:
-      - name: plutus-sync
-        image: {{image}}
-        imagePullPolicy: IfNotPresent
-        command: ["/bin/sh","-c"]
-        args: 
-          - ./start.sh
-        env:
-          - name: PLUTUS_BASE_URL
-            value: "http://plutus-api/v1/"
-          - name: FMP_BASE_URL
-            value: "https://financialmodelingprep.com/api/v3/"
-      restartPolicy: Never
+      template:
+        spec:
+          containers:
+          - name: plutus-sync
+            image: {{image}}
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/sh","-c"]
+            args:
+            - ./start.sh
+            env:
+              - name: PLUTUS_BASE_URL
+                value: "http://plutus-api/v1/"
+              - name: FMP_BASE_URL
+                value: "https://financialmodelingprep.com/api/v3/"
+          restartPolicy: Never
