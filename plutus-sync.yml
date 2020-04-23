@@ -11,8 +11,9 @@ spec:
       - name: plutus-sync
         image: {{image}}
         imagePullPolicy: IfNotPresent
-        command: ["/bin/sh"]
-        args: ["-c","./start.sh"]
+        command: ["/bin/sh","-c"]
+        args: 
+          - ./start.sh
         env:
           - name: PLUTUS_BASE_URL
             value: "http://plutus-api/v1/"
