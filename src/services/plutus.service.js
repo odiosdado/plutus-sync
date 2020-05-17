@@ -92,7 +92,7 @@ class PlutusService {
         try {
             eval(codeBlock);
         } catch (error) {
-            logger.error(error);
+            logger.error({ message: error.message, stack: error.stack });
         }
         return value;
     }

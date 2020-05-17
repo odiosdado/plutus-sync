@@ -59,7 +59,6 @@ describe('# plutus.service', function(){
         it('## should return a value when given stock data and an algorithm', async function(){
             const algorithm = {
                 formula: '(netIncome / shares) / (((assets - liabilities)/shares)/price)'
-                //formula: 'data'
             }
             const stock =  {
                 "name": "Apple",
@@ -67,7 +66,7 @@ describe('# plutus.service', function(){
                 "createdAt": "2020-04-12T16:00:32.987Z",
                 "updatedAt": "2020-04-12T16:03:49.827Z",
                 "latestStockData": {
-                    "netIncome": "55256000000",
+                    "netIncome": "-55256000000",
                     "assets": "340618000000",
                     "liabilities": "251087000000",
                     "shares": "4415040000",
@@ -81,6 +80,31 @@ describe('# plutus.service', function(){
             }
             const value = await plutusService.calculateAlgorithmValue(stock, algorithm);
             expect(value).to.exist
+        });
+        it('## should return a 0 when given stock data with negative netIncome and an algorithm', async function(){
+            const algorithm = {
+                formula: 'netIncome <= 0 ? 0 : (netIncome / shares) / (((assets - liabilities)/shares)/price)'
+            }
+            const stock =  {
+                "name": "Apple",
+                "symbol": "AAPL",
+                "createdAt": "2020-04-12T16:00:32.987Z",
+                "updatedAt": "2020-04-12T16:03:49.827Z",
+                "latestStockData": {
+                    "netIncome": "-55256000000",
+                    "assets": "340618000000",
+                    "liabilities": "251087000000",
+                    "shares": "4415040000",
+                    "price": "267.96",
+                    "stock": "5e933b200d75acc151c65205",
+                    "createdAt": "2020-04-12T16:03:49.808Z",
+                    "updatedAt": "2020-04-12T16:03:49.808Z",
+                    "id": "5e933be59a6accc16ef76cb2"
+                },
+                "id": "5e933b200d75acc151c65205"
+            }
+            const response = await plutusService.calculateAlgorithmValue(stock, algorithm);
+            expect(response.value).to.eql(0)
         });
     })
 })
