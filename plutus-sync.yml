@@ -5,7 +5,7 @@ metadata:
   labels:
     app: plutus-sync
 spec:
-  schedule: '@midnight'
+  schedule: '0 1 15 * *'
   jobTemplate:
     spec:
       template:
