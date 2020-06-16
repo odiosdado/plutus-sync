@@ -51,7 +51,8 @@ async function init() {
     await loadStockData();
     await loadAlgorithmValues();
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
+    logger.error(error.stack);
   }
 }
 

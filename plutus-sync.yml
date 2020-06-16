@@ -12,8 +12,8 @@ spec:
         spec:
           containers:
           - name: plutus-sync
-            image: {{image}}
-            imagePullPolicy: IfNotPresent
+            image: {{ image }}
+            imagePullPolicy: Always
             command: ["/bin/sh","-c"]
             args:
             - ./start.sh
@@ -22,4 +22,6 @@ spec:
                 value: "http://plutus-api/v1/"
               - name: FMP_BASE_URL
                 value: "https://financialmodelingprep.com/api/v3/"
+              - name: FMP_API_KEY
+                value: "d94ab1f715513566f61ee6ce9f7b9b5e"
           restartPolicy: Never

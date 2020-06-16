@@ -2,18 +2,26 @@ import axios from 'axios';
 import config from '../constants/config';
 import logger from '../logger';
 
-axios.interceptors.response.use(function (response) {
-    return response;
-  }, function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
-    return Promise.reject(error);
-  });
-
 class FmpService {
     constructor() {
         this.instance = axios.create({
             baseURL: config.fmpApi.baseUrl
+        });
+        this.instance.interceptors.response.use(
+            response => {
+                if (response.data['Error Message']) {
+                    throw new Error(response.data['Error Message']);
+                }
+                return response;
+            },
+            error => {
+                throw new Error(error.response.data.message)
+            }
+        );
+        this.instance.interceptors.request.use((config) => {
+            config.params = config.params || {};
+            config.params['apikey'] = process.env.FMP_API_KEY;
+            return config;
         });
     }
 
