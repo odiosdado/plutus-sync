@@ -1,6 +1,7 @@
 import axios from 'axios';
 import config from '../constants/config';
 import logger from '../logger';
+import { getMostRecentQuarter, calculateStockPriceDateRange } from '../utils/helpers';
 
 class FmpService {
     constructor() {
@@ -30,9 +31,9 @@ class FmpService {
         return response.data['symbolsList'];
     }
 
-    async getIncomeStatement(symbol) {
+    async getIncomeStatement(symbol, period) {
         logger.debug(`financials/income-statement/${symbol}`);
-        const response = await this.instance.get(`financials/income-statement/${symbol}`);
+        const response = await this.instance.get(`financials/income-statement/${symbol}?period=${period}`);
         return response.data;
     }
 
@@ -51,24 +52,50 @@ class FmpService {
         return response.data;
     }
 
-    async getStockData(symbol) {
+    async getHistoricalStockPrice(symbol, range) {
+        const url = `historical-price-full/${symbol}?from=${range.startDate.format("YYYY-MM-DD")}&to=${range.endDate.format("YYYY-MM-DD")}`;
+        console.log({ url })
+        const response = await this.instance.get(url);
+        return response.data;
+    }
+
+    async getStockData(date, symbol) {
         try {
             logger.debug(`getStockData:: ${symbol}`)
-            const incomeStatement = await this.getIncomeStatement(symbol);
+            const range = calculateStockPriceDateRange(date);
+            logger.debug(`stock pice date range:: ${range}`)
+            const incomeStatement = await this.getIncomeStatement(symbol, 'quarter');
             const balanceSheet = await this.getBalanceSheet(symbol, 'quarter');
             const enterpriseValue = await this.getEnterpriseValue(symbol, 'quarter');
-            const price = await this.getStockPrice(symbol);
+            const prices = await this.getHistoricalStockPrice(symbol, range);
+            if (!incomeStatement.financials) {
+                logger.debug(`No stock data found for : ${symbol}`)
+                return null;
+            }
+            if (!prices.historical) {
+                logger.debug(`No stock price found for : ${symbol} using range ${range}`)
+                return null;
+            }
+            const lastQuarterIncomeStatement = getMostRecentQuarter(date, incomeStatement.financials);
+            if (!lastQuarterIncomeStatement) {
+                logger.debug(`No income statement found for : ${symbol} within the last quarter of ${date}`)
+                return null;
+            }
+            const lastQuarterBalanceSheet = getMostRecentQuarter(date, balanceSheet.financials);
+            const lastQuarterEnterpriseValue = getMostRecentQuarter(date, enterpriseValue.enterpriseValues);
 
+            console.log({ })
             return {
-                netIncome: incomeStatement.financials[0]['Net Income'],
-                assets: balanceSheet.financials[0]['Total assets'],
-                liabilities: balanceSheet.financials[0]['Total liabilities'],
-                shares: enterpriseValue.enterpriseValues[0]['Number of Shares'],
-                price: price.price
+                netIncome: lastQuarterIncomeStatement['Net Income'],
+                assets: lastQuarterBalanceSheet['Total assets'],
+                liabilities: lastQuarterBalanceSheet['Total liabilities'],
+                shares: lastQuarterEnterpriseValue['Number of Shares'],
+                price: prices.historical[0].close,
+                createdAt: date,
             }
         } catch (error) {
             logger.error(`getStockData:: ${symbol} ${error.message}`)
-            logger.error(error)
+            logger.error(error.stack)
         }
     }
 }
