@@ -8,12 +8,13 @@ image: atlassian/default-image:2
 pipelines:
   default:
     - step:
-        name: Build Docker Image
+        name: Build docker image
         services:
           - docker
         script: # Modify the commands below to build your repository.
           # Set $DOCKER_HUB_USERNAME and $DOCKER_HUB_PASSWORD as environment variables in repository settings
-          - export IMAGE_NAME=$DOCKER_HUB_USERNAME/$DOCKER_HUB_REPO:plutus-sync-$BITBUCKET_BUILD_NUMBER
+          - export APP_NAME=$(echo $BITBUCKET_REPO_FULL_NAME | awk -F"/" '{print $2}')
+          - export IMAGE_NAME=$DOCKER_HUB_USERNAME/$DOCKER_HUB_REPO:$APP_NAME-$BITBUCKET_BUILD_NUMBER
 
           # build the Docker image (this will use the Dockerfile in the root of the repo)
           - docker build -t $IMAGE_NAME .
@@ -22,12 +23,27 @@ pipelines:
           # push the new Docker image to the Docker registry
           - docker push $IMAGE_NAME
     - step:
-        name: Deploy
-        deployment: production
+        name: Deploy to development
+        deployment: development
         script:
-          - sed -i "s|{{image}}|$DOCKER_HUB_USERNAME/$DOCKER_HUB_REPO:plutus-sync-$BITBUCKET_BUILD_NUMBER|g" plutus-sync.yml
+          - export APP_NAME=$(echo $BITBUCKET_REPO_FULL_NAME | awk -F"/" '{print $2}')
+          - export IMAGE_NAME=$DOCKER_HUB_USERNAME/$DOCKER_HUB_REPO:$APP_NAME-$BITBUCKET_BUILD_NUMBER
+          - ./replace-tokens.sh deployment.yml
           - pipe: atlassian/kubectl-run:1.1.2
             variables:
               KUBE_CONFIG: $KUBE_CONFIG
               KUBECTL_COMMAND: 'apply'
-              RESOURCE_PATH: 'plutus-sync.yml'
+              RESOURCE_PATH: 'deployment.yml'
+    - step:
+        name: Deploy to production
+        deployment: production
+        trigger: manual
+        script:
+          - export APP_NAME=$(echo $BITBUCKET_REPO_FULL_NAME | awk -F"/" '{print $2}')
+          - export IMAGE_NAME=$DOCKER_HUB_USERNAME/$DOCKER_HUB_REPO:$APP_NAME-$BITBUCKET_BUILD_NUMBER
+          - ./replace-tokens.sh deployment.yml
+          - pipe: atlassian/kubectl-run:1.1.2
+            variables:
+              KUBE_CONFIG: $KUBE_CONFIG
+              KUBECTL_COMMAND: 'apply'
+              RESOURCE_PATH: 'deployment.yml'
