@@ -2,25 +2,8 @@ import logger from './logger'
 import plutusService from './services/plutus.service';
 import fmpService from './services/fmp.service';
 import { removeDuplicates, getMonthlyDatesBetweenRange, splitIntoEqualChunks } from './utils/helpers';
-
-async function loadStocks() {
-  const plutusStocks = await plutusService.getStocks();
-  const fmpStocks = await fmpService.getStockList();
-  const stocksToCreate = removeDuplicates(fmpStocks, plutusStocks, 'symbol');
-
-  logger.debug(`Loading new stocks into plutus`)
-  logger.debug(`Plutus stocks: ${plutusStocks.length}`)
-  logger.debug(`FMP stocks: ${fmpStocks.length}`)
-  logger.debug(`After removing duplicates: ${stocksToCreate.length}`)
-
-  for(const stock of stocksToCreate) {
-    try {
-      await plutusService.createStock(stock);
-    } catch (error) {
-      logger.error(error);
-    }
-  };
-}
+import config from './constants/config';
+import insertRowsAsStream from './services/bigquery';
 
 async function processEachChunk(dates, chunk) {
   for (const date of dates) {
@@ -28,23 +11,29 @@ async function processEachChunk(dates, chunk) {
       try {
         const stockData = await fmpService.getStockData(date, stock.symbol);
         if (stockData) {
-          const data = await plutusService.createStockData(stock.id, stockData);
-          plutusService.aggregateAlgoritmValues(data, 'quarterly', date);
+          const plutusValue = await plutusService.getValueFromFormula(stockData, config.plutusFormula)
+          stock = { ... stock, ... stockData, plutusValue }
+          insertRowsAsStream([stock])
         }
       } catch (error) {
         logger.error(error.message);
+        logger.error(error.stack);
       }
     };
   }
 }
 
 async function loadStockData(dates) {
-  const plutusStocks = await plutusService.getStocks();
+  const stocks = await fmpService.getStockList()
   logger.debug(`Loading new stock data`)
-  logger.debug(`Plutus stocks: ${plutusStocks.length}`)
-  const chunks = splitIntoEqualChunks(plutusStocks);
-  for (const chunk of chunks) {
-    logger.debug(`processing chunk ${chunks[chunk]}`);
+  logger.debug(`stocks: ${stocks.length}`)
+  // processEachChunk(dates, stocks)
+  
+  const chunks = splitIntoEqualChunks(stocks);
+  logger.debug(`chunks: ${chunks.length}`)
+  for (let index = 0; index < chunks.length; index++) {
+    const chunk = chunks[index];
+    logger.debug(`processing chunk ${index} of ${chunks.length}`)
     processEachChunk(dates, chunk)
   }
 }
@@ -60,8 +49,8 @@ async function loadAlgorithmValues(date) {
 
 async function init(dates) {
   try {
-    await loadStocks();
     loadStockData(dates);
+    //processEachChunk(dates, [{ symbol: 'AAPL'}])
   } catch (error) {
     logger.error(error.message);
     logger.error(error.stack);

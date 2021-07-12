@@ -115,4 +115,16 @@ describe('# helpers', function(){
             expect(chunks.length).eql(Math.floor(Math.sqrt(stocks.length)));
         });
     })
+    describe('## formatFillingDate', function(){
+        it('## should 2019-10-31 when given 2019-10-31 00:00:00', async function () {
+            const calcDate = "2019-10-31 00:00:00";
+            const date = helpers.formatFillingDate(calcDate);
+            expect(date).eql("2019-10-31");
+        });
+        // it('## should return the same day when given a date that is a workday', async function () {
+        //     const calcDate = "2020-08-24";
+        //     const date = helpers.getMostRecentBusinessDate(calcDate);
+        //     expect(date.isSame(moment("2020-08-24"))).eql(true);
+        // });
+    })
 })

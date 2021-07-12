@@ -99,3 +99,7 @@ export const splitIntoEqualChunks = (stocks) => {
     }
     return chunks;
 }
+
+export const formatFillingDate = (date) => {
+    return moment(date).format("YYYY-MM-DD")
+}
