@@ -18,6 +18,14 @@ const config = {
       json: false,
       colorize: true,
     }
+  },
+
+  plutusFormula: "netIncome <= 0 ? 0 : (netIncome / shares) / (((assets - liabilities)/shares)/price)",
+
+  bigQuery: {
+    tableId: 'stocks',
+    datasetId: 'plutus',
+    keyPath: process.env.GOOGLE_APPLICATION_CREDENTIALS
   }
 };
 export default config;
