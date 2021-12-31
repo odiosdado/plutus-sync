@@ -1,0 +1,92 @@
+[
+    {
+        "name": "name",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Stock name"
+    },
+    {
+        "name": "symbol",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Stock symbol"
+    },
+    {
+        "name": "type",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Type of security"
+    },
+    {
+        "name": "exchange",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Exchange stock resides under"
+    },
+    {
+        "name": "exchangeShortName",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Exchange short name stock resides under"
+    },
+    {
+        "name": "plutusValue",
+        "type": "BIGNUMERIC",
+        "mode": "NULLABLE",
+        "description": "Plutus Value"
+    },
+    {
+        "name": "price",
+        "type": "BIGNUMERIC",
+        "mode": "NULLABLE",
+        "description": "Stock price"
+    },
+    {
+        "name": "assets",
+        "type": "BIGNUMERIC",
+        "mode": "NULLABLE",
+        "description": "Stock assets"
+    },
+    {
+        "name": "netIncome",
+        "type": "BIGNUMERIC",
+        "mode": "NULLABLE",
+        "description": "Stock netIncome"
+    },
+    {
+        "name": "liabilities",
+        "type": "BIGNUMERIC",
+        "mode": "NULLABLE",
+        "description": "Stock liabilities"
+    },
+    {
+        "name": "shares",
+        "type": "BIGNUMERIC",
+        "mode": "NULLABLE",
+        "description": "Stock shares"
+    },
+    {
+        "name": "fillingDate",
+        "type": "DATETIME",
+        "mode": "NULLABLE",
+        "description": "Stock values filling date"
+    },
+    {
+        "name": "fillingPeriod",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Stock values filling period"
+    },
+    {
+        "name": "fillingLink",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Stock values filling period"
+    },
+    {
+        "name": "valueDate",
+        "type": "DATETIME",
+        "mode": "NULLABLE",
+        "description": "Date of plutus value"
+    }
+]

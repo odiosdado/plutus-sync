@@ -21,12 +21,12 @@ class FmpService {
                 }
                 return response;
             },
-            error => {
-                PENDING_REQUESTS = Math.max(0, PENDING_REQUESTS - 1)
-                if(error.response && error.response.data && error.response.data['Error Message']) {
-                    throw new Error(`${error.response.data['Error Message']} at ${error.config.url}`)
+            function (error) {
+                PENDING_REQUESTS = Math.max(0, PENDING_REQUESTS - 1);
+                if (error.response && error.response.data && error.response.data['Error Message']) {
+                    throw new Error(`${error.response.data['Error Message']} at ${error.config.url}`);
                 }
-                throw error
+                throw error;
             }
         );
         this.instance.interceptors.request.use((config) => {
