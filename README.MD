@@ -1,22 +1,15 @@
-# plutus-api
+# plutus-sync
 
-pluts-api is the backend API for the Plutus app.
+pluts-sync aggregates stock information from Financial Modeling Pro. This data is then uploaded to google big query
 
 ## Development
 
 You must have a .env file in the root project. The following environment variables are necessary:
 
 ```
-MONGODB_URI=mongodb://localhost:27017/drivlab
-JWT_SECRET=jwt-secret-here
-FACEBOOK_CLIENT_ID=facebook-client-id-here
-FACEBOOK_CLIENT_SECRET=facebook-client-secret-here
-FACEBOOK_CALLBACK_URL=http://localhost:3000/auth/facebook/callback
-FACEBOOK_PROFILE_URL=https://graph.facebook.com/v2.5/me?fields=first_name,last_name,email
-GOOGLE_CLIENT_ID=google-client-id-here
-GOOGLE_CLIENT_SECRET=google-client-secret-here
-GOOGLE_CALLBACK_URL=http://localhost:3000/v1/auth/google/callback
-LOGGER_LEVEL=debug
+FMP_BASE_URL=https://financialmodelingprep.com/api/v3/
+FMP_API_KEY=MYSECRETTOKEN
+GOOGLE_APPLICATION_CREDENTIALS=path/to/json/key
 ```
 You can launch via nodemon/babel
 

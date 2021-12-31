@@ -1,6 +1,9 @@
 provider "google" {
   project = "plutus-273220"
 }
+provider "google-beta" {
+  project = "plutus-273220"
+}
 
 resource "google_bigquery_dataset" "plutus" {
   dataset_id    = "plutus_sync"
@@ -21,4 +24,11 @@ resource "google_bigquery_table" "default" {
       num_rows
     ]
   }
+}
+
+resource "google_artifact_registry_repository" "plutus_repo" {
+  provider      = google-beta
+  repository_id = "plutus-sync"
+  description   = "Docker repo to store plutus-sync"
+  format        = "DOCKER"
 }
