@@ -1,4 +1,4 @@
-name: 'Terraform'
+name: 'build'
 
 on:
   push:
@@ -46,3 +46,17 @@ jobs:
     - name: Terraform Apply
       if: github.ref == 'refs/heads/master' && github.event_name == 'push'
       run: terraform apply -auto-approve
+
+  # build-and-push-to-gcr:
+  #   name: 'Build and push to GCR'
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: google-github-actions/setup-gcloud@master
+  #     - uses: RafikFarhad/push-to-gcr-github-action@v4
+  #       with:
+  #         gcloud_service_key: ${{ secrets.GCLOUD_SERVICE_KEY }}
+  #         registry: gcr.io
+  #         project_id: plutus-273220
+  #         image_name: server-end
