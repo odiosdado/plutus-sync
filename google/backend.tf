@@ -2,7 +2,7 @@ terraform {
   cloud {
     organization = "oddevs"
     workspaces {
-      name = "pltutus-sync-google"
+      name = "plutus-sync-google"
     }
   }
 }
