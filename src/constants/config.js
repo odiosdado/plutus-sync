@@ -24,7 +24,7 @@ const config = {
 
   bigQuery: {
     tableId: 'stocks',
-    datasetId: 'plutus',
+    datasetId: 'plutus_sync',
     keyPath: process.env.GOOGLE_APPLICATION_CREDENTIALS
   }
 };

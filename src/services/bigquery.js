@@ -15,6 +15,11 @@ export default function insertRowsAsStream(rows) {
             logger.debug(`insertRowsAsStream:: Inserted ${rows.length} rows`);
         })
         .catch(error => {
-            logger.error(`insertRowsAsStream:: error inserting rows:`, error.response.insertErrors[0].errors)
+            logger.error(`insertRowsAsStream:: error inserting rows:`)
+            logger.error(error)
+            if (error.response && error.response.insertErrors
+                && error.response.insertErrors[0].errors) {
+                logger.error(error.response.insertErrors[0].errors)
+            }
         });
 }
