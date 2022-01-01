@@ -4,7 +4,7 @@ import config from '../constants/config';
 import logger from '../logger';
 import { getMostRecentQuarter, calculateStockPriceDateRange, formatFillingDate } from '../utils/helpers';
 
-const MAX_REQUESTS_COUNT = 10
+const MAX_REQUESTS_COUNT = 5
 const INTERVAL_MS = 1000
 let PENDING_REQUESTS = 0
 

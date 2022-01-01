@@ -26,9 +26,9 @@ resource "google_bigquery_table" "default" {
   }
 }
 
-resource "google_artifact_registry_repository" "plutus_repo" {
-  provider      = google-beta
-  repository_id = "plutus-sync"
-  description   = "Docker repo to store plutus-sync"
-  format        = "DOCKER"
+resource "google_container_registry" "registry" {
+}
+
+output "container_registry" {
+  value = google_container_registry.registry
 }
