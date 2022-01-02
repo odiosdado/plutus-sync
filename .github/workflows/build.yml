@@ -50,11 +50,6 @@ jobs:
   build-and-push-to-gcr:
     name: 'Build and push to GCR'
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./node
-        
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2
@@ -65,3 +60,4 @@ jobs:
           registry: gcr.io
           project_id: plutus-273220
           image_name: plutus-sync
+          dockerfile: ./node/Dockerfile
