@@ -8,7 +8,7 @@ on:
 
 jobs:
   terraform:
-    name: 'Terraform'
+    name: 'Apply Terraform on GCP'
     runs-on: ubuntu-latest
     environment: production
 
@@ -16,7 +16,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./google
+        working-directory: ./terraform/google
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -50,6 +50,11 @@ jobs:
   build-and-push-to-gcr:
     name: 'Build and push to GCR'
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./node
+        
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2

@@ -38,6 +38,11 @@ resource "google_cloud_run_service" "default" {
         }
       }
     }
+    metadata {
+      annotations = {
+        "run.googleapis.com/cpu-throttling" = "false" // cpu always on
+      }
+    }
   }
 
   depends_on = [
