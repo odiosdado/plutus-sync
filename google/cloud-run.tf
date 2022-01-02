@@ -5,9 +5,17 @@ resource "google_cloud_run_service" "default" {
     spec {
       containers {
         image = "gcr.io/plutus-273220/plutus-sync"
+        volume_mounts {
+          name       = "secrets-volume"
+          mount_path = "/secrets"
+        }
         env {
           name  = "FMP_BASE_URL"
           value = "https://financialmodelingprep.com/api/v3/"
+        }
+        env {
+          name  = "GOOGLE_APPLICATION_CREDENTIALS"
+          value = "/secrets/plutus-key.json"
         }
         env {
           name = "FMP_API_KEY"
@@ -18,13 +26,14 @@ resource "google_cloud_run_service" "default" {
             }
           }
         }
-        env {
-          name = "GOOGLE_APPLICATION_CREDENTIALS"
-          value_from {
-            secret_key_ref {
-              name = google_secret_manager_secret.gcp.secret_id
-              key  = "latest"
-            }
+      }
+      volumes {
+        name = "secrets-volume"
+        secret {
+          secret_name = google_secret_manager_secret.gcp.secret_id
+          items {
+            key  = "latest"
+            path = "plutus-key.json"
           }
         }
       }
