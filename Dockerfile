@@ -19,4 +19,5 @@ COPY --from=build /usr/src/app/node_modules /usr/src/app/node_modules
 COPY --from=build /usr/src/app/dist /usr/src/app/
 
 USER node
-CMD [ "node", "index.js" ]
+ENV PORT=8080
+ENTRYPOINT [ "node", "index.js" ]
