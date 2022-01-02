@@ -1,6 +1,6 @@
 import express from 'express';
 import config from './constants/config';
-import { loadStockData } from './routes'
+import { runSync, testSync } from './routes'
 const app = express();
 app.use(express.json());
 
@@ -9,8 +9,8 @@ app.get('/', (req, res) => {
 });
 
 app.post('/run-sync', (req, res) => {
-  const { start, end } = req.body;
-  loadStockData(start, end);
+  const { start, end, test } = req.body;
+  runSync(start, end, test);
   res.json({ message: `Sync started for dates ${start} to ${end}`})
 });
 

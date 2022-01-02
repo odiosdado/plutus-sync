@@ -6,39 +6,51 @@ import config from '../constants/config';
 import insertRowsAsStream from '../services/bigquery';
 
 async function processEachChunk(dates, chunk) {
-  for (const date of dates) {
-    for (const stock of chunk) {
-      try {
-        const stockData = await fmpService.getStockData(date, stock.symbol);
-        if (stockData) {
-          const plutusValue = await plutusService.getValueFromFormula(stockData, config.plutusFormula)
-          stock = { 
-              ...stock, 
-              ...stockData, 
-              plutusValue 
-            }
-          insertRowsAsStream([stock])
-        }
-      } catch (error) {
-        logger.error(error.message);
-        logger.error(error.stack);
+  let completedStocks = []
+  for (const stock of chunk) {
+    const stockAllQuarterData = await fmpService.getFinancialDataForAllQuarters(stock.symbol);
+    if(!stockAllQuarterData){
+      continue;
+    }
+    for(const date of dates) {
+      const stockQuarterData = await fmpService.getFinancialDataFromMostRecentQuarter(date, stockAllQuarterData, stock.symbol);
+      if(!stockQuarterData){
+        continue;
       }
-    };
+      const price = await fmpService.getStockPriceByDate(date, stock.symbol);
+      if(!price){
+        continue
+      }
+      let stockData = {
+        ...stock,
+        ...stockQuarterData,
+        price,
+      }
+      const plutusValue = await plutusService.getValueFromFormula(stockData, config.plutusFormula);
+      stockData = {
+        ...stockData,
+        plutusValue,
+        valueDate: date.toISOString().slice(0, -1),
+      }
+      completedStocks.push(stockData);
+    }
   }
+  insertRowsAsStream(completedStocks)
 }
 
-export async function loadStockData(start, end) {
+export async function runSync(start, end, test) {
+  console.log(`loadStockData() start=${start}, end=${end}`)
   const dates = getMonthlyDatesBetweenRange(start, end);
-  logger.debug({ dates })
-  const stocks = await fmpService.getStockList()
-  logger.debug(`Loading new stock data`)
-  logger.debug(`stocks: ${stocks.length}`)
-  
+  let stocks = [{ symbol: 'AAPL'}]
+  if(!test) {
+    stocks = await fmpService.getStockList()
+    console.log(`Stocks found: ${stocks.length}`)
+  }
   const chunks = splitIntoEqualChunks(stocks);
-  logger.debug(`chunks: ${chunks.length}`)
+  console.log(`equal chunks split: ${chunks.length}`)
   for (let index = 0; index < chunks.length; index++) {
     const chunk = chunks[index];
-    logger.debug(`processing chunk ${index} of ${chunks.length}`)
+    console.log(`processing chunk ${index} of ${chunks.length}`)
     processEachChunk(dates, chunk)
   }
 }
