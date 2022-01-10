@@ -41,7 +41,7 @@ async function processEachChunk(dates, chunk) {
 export async function runSync(start, end, test) {
   console.log(`loadStockData() start=${start}, end=${end}`)
   const dates = getMonthlyDatesBetweenRange(start, end);
-  let stocks = [{ symbol: 'AAPL'}]
+  let stocks = [{ symbol: 'ABDP.L'}]
   if(!test) {
     stocks = await fmpService.getStockList()
     console.log(`Stocks found: ${stocks.length}`)

@@ -74,19 +74,17 @@ export const getMostRecentBusinessDate = (calcDate) => {
 export const getMonthlyDatesBetweenRange = (startDate, endDate) => {
     console.log(`getMonthlyDatesBetweenRange() startDate=${startDate}, endDate=${endDate}`)
     if(!startDate || !endDate) {
-        startDate = moment();
-        endDate = moment();
-        console.log(`dates were null, setting default startDate=${startDate}, endDate=${endDate}`)
+        const currDate = moment();
+        console.log(`dates were null, returning range of current date: ${currDate}`)
+        return [currDate.toDate()]
     }
     const dates = [];
     const currDate = moment(startDate).startOf('day');
     const lastDate = moment(endDate).startOf('day');
     console.log(`currDate=${currDate}, lastDate=${lastDate}`)
-    while(currDate.add(1, 'months').diff(lastDate) < 0) {
+    dates.push(currDate.toDate());
+    while(currDate.add(1, 'months').diff(lastDate) <= 0) {
         dates.push(currDate.clone().toDate());
-    }
-    if(dates.length === 0) {
-        dates.push(moment(startDate));
     }
     console.log(`dates=${dates}`)
     return dates;

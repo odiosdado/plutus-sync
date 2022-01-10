@@ -18,72 +18,7 @@ class PlutusService {
             baseURL: config.plutusApi.baseUrl
         });
     }
-
-    async getStocks() {
-        const response = await this.instance.get('stocks');
-        return response.data;
-    }
-
-    async createStock(stock) {
-        const response = await this.instance.post('stocks', stock);
-        return response.data;
-    }
-
-    async createStockData(stockId, stockData) {
-        const url = `stocks/${stockId}/stock-data`;
-        logger.debug({ 'createStockData:': { url, stockData }});
-        const response = await this.instance.post(`stocks/${stockId}/stock-data`, stockData);
-        return response.data;
-    }
-
-    async getAlgorithms(schedule) {
-        let url = 'algorithms';
-        if(schedule) {
-            url += `?schedule=${schedule}`
-        }
-        const response = await this.instance.get(url);
-        return response.data;
-    }
-
-    async getStockData(date) {
-        const response = await this.instance.get(`stock-data?date=${date.format('YYYY-MM-DD')}`);
-        return response.data;
-    }
-
-    async createAlgorithmValue(algorithmId, algorithmValue) {
-        const response = await this.instance.post(`algorithms/${algorithmId}/algorithm-values`, algorithmValue);
-        return response.data;
-    }
-
-    async aggregateAlgoritmValues(data, schedule, date) {
-        const algorithms = await this.getAlgorithms(schedule);
-        //const stockData = await this.getStockData(date);
-        //for (const data of stockData) {
-            for (const algorithm of algorithms) {
-                if (algorithm.allStocks || algorithm.getStocks().includes(data.stock.id)) {
-                    try {
-                        const algorithmValue = await this.calculateAlgorithmValue(data, algorithm, date);
-                        logger.debug({ 'symbol': data.stock.symbol, 'algorithm value': algorithmValue });
-                        await this.createAlgorithmValue(algorithm.id, algorithmValue, date);
-                    } catch (error) {
-                        logger.error(error.message)
-                    }
-                }
-            };
-        //};
-    }
-
-    async calculateAlgorithmValue(data, algorithm, date) {
-        const { formula } = algorithm;
-        const value = await this.getValueFromFormula(data, formula);
-        const algorithmValue = {
-            value,
-            stockData: data.id,
-            createdAt: date
-        }
-        return algorithmValue;
-    }
-
+    
     async getValueFromFormula(stockData, formula) {
         let codeBlock = '';
         for(let key in stockData) {

@@ -127,4 +127,15 @@ describe('# helpers', function(){
         //     expect(date.isSame(moment("2020-08-24"))).eql(true);
         // });
     })
+    describe('## getMonthlyDatesBetweenRange', function(){
+        it('## should return range with one date when given no parameters', async function () {
+            const date = moment();
+            const range = helpers.getMonthlyDatesBetweenRange();
+            expect(moment(range[0]).isSame(date, 'day')).eql(true);
+        });
+        it('## should return four dates when given 2021-09-15 and 2021-12-15', async function () {
+            const range = helpers.getMonthlyDatesBetweenRange('2021-09-15','2021-12-15');
+            expect(range.length).eql(4);
+        });
+    })
 })
