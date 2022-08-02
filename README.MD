@@ -68,5 +68,14 @@ where rank <= 25
 order by dt
 ```
 
+## Run manually
+From a cloud shell, run the following
+
+```bash
+curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" \ 
+    --request POST {cloud-run-url}/run-sync \
+    --header 'Content-Type: application/json' \
+    --data-raw '{"start": "YYYY-MM-DD", "end": "YYYY-MM-DD", "test": "false"}'
+```
 ## License
 [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
