@@ -8,6 +8,10 @@ const bigquery = new BigQuery({
 });
 
 export default function insertRowsAsStream(rows) {
+    if(rows.length == 0) {
+        logger.debug(`Skipped: No rows to save to bigquery`);
+        return
+    }
     bigquery
         .dataset(config.bigQuery.datasetId)
         .table(config.bigQuery.tableId)
@@ -16,7 +20,7 @@ export default function insertRowsAsStream(rows) {
         })
         .catch(error => {
             logger.error(`insertRowsAsStream:: error inserting rows:`)
-            logger.error(error)
+            logger.error(`${error}`)
             if (error.response && error.response.insertErrors
                 && error.response.insertErrors[0].errors) {
                 logger.error(error.response.insertErrors[0].errors)

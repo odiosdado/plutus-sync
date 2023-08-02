@@ -72,10 +72,10 @@ order by dt
 From a cloud shell, run the following
 
 ```bash
-curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" \ 
-    --request POST {cloud-run-url}/run-sync \
+ curl -X POST {cloud-run-url}/run-sync \
+    --header "Authorization: Bearer $(gcloud auth print-identity-token)" \
     --header 'Content-Type: application/json' \
-    --data-raw '{"start": "YYYY-MM-DD", "end": "YYYY-MM-DD", "test": "false"}'
+    --data-raw '{"start": "2023-01-01", "end": "2023-02-01", "test": true }'
 ```
 ## License
 [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
