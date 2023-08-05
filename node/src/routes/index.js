@@ -1,7 +1,7 @@
 import logger from '../logger'
 import plutusService from '../services/plutus.service';
 import fmpService from '../services/fmp.service';
-import { getMonthlyDatesBetweenRange, splitIntoEqualChunks } from '../utils/helpers';
+import { getMonthlyDatesBetweenRange, splitIntoEqualChunks, estimatedRunTime } from '../utils/helpers';
 import config from '../constants/config';
 import insertRowsAsStream from '../services/bigquery';
 
@@ -39,37 +39,19 @@ async function processEachChunk(dates, chunk) {
 }
 
 export async function runSync(start, end, test) {
-  console.log(`loadStockData() start=${start}, end=${end}, test=${test}`)
+  logger.debug(`loadStockData() start=${start}, end=${end}, test=${test}`)
   const dates = getMonthlyDatesBetweenRange(start, end);
   let stocks = [{ symbol: 'AAPL'}]
   if(!test) {
     stocks = await fmpService.getStockList()
-    console.log(`Stocks found: ${stocks.length}`)
+    logger.debug(`Stocks found: ${stocks.length}`)
   }
+  logger.debug(`estimated run time: ${estimatedRunTime(stocks.length)}`)
   const chunks = splitIntoEqualChunks(stocks);
-  console.log(`equal chunks split: ${chunks.length}`)
+  logger.debug(`equal chunks split: ${chunks.length}`)
   for (let index = 0; index < chunks.length; index++) {
     const chunk = chunks[index];
-    console.log(`processing chunk ${index} of ${chunks.length}`)
+    logger.debug(`processing chunk ${index} of ${chunks.length}`)
     processEachChunk(dates, chunk)
   }
 }
-
-// async function init(dates) {
-//   try {
-//     loadStockData(dates);
-//     //processEachChunk(dates, [{ symbol: 'AAPL'}])
-//   } catch (error) {
-//     logger.error(error.message);
-//     logger.error(error.stack);
-//   }
-// }
-
-// logger.debug('Starting plutus-sync');
-// var args = process.argv.slice(2);
-// logger.debug({ args });
-// let startDate = args[0] ? args[0].split('=')[1] : null;
-// let endDate = args[1] ? args[1].split('=')[1] : null;
-// const dates = getMonthlyDatesBetweenRange(startDate, endDate);
-// console.log({ dates });
-// init(dates);

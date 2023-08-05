@@ -1,6 +1,8 @@
 import express from 'express';
 import config from './constants/config';
 import { runSync, testSync } from './routes'
+import logger from './logger'
+
 const app = express();
 app.use(express.json());
 
@@ -16,5 +18,5 @@ app.post('/run-sync', (req, res) => {
 
 const port = process.env.PORT;
 app.listen(port, () => {
-  console.log(`plutus-sync: listening on port ${port}`);
+  logger.debug(`plutus-sync: listening on port ${port}`);
 });

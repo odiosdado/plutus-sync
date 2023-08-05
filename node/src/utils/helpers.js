@@ -1,4 +1,6 @@
 import moment, { months } from "moment";
+import logger from '../logger'
+import config from "../constants/config";
 
 export const internalError = (error, res) => {
     if (error.message) {
@@ -72,21 +74,21 @@ export const getMostRecentBusinessDate = (calcDate) => {
 }
 
 export const getMonthlyDatesBetweenRange = (startDate, endDate) => {
-    console.log(`getMonthlyDatesBetweenRange() startDate=${startDate}, endDate=${endDate}`)
+    logger.debug(`getMonthlyDatesBetweenRange() startDate=${startDate}, endDate=${endDate}`)
     if(!startDate || !endDate) {
         const currDate = moment();
-        console.log(`dates were null, returning range of current date: ${currDate}`)
+        logger.debug(`dates were null, returning range of current date: ${currDate}`)
         return [currDate.toDate()]
     }
     const dates = [];
     const currDate = moment(startDate).startOf('day');
     const lastDate = moment(endDate).startOf('day');
-    console.log(`currDate=${currDate}, lastDate=${lastDate}`)
+    logger.debug(`currDate=${currDate}, lastDate=${lastDate}`)
     dates.push(currDate.toDate());
     while(currDate.add(1, 'months').diff(lastDate) <= 0) {
         dates.push(currDate.clone().toDate());
     }
-    console.log(`dates=${dates}`)
+    logger.debug(`dates=${dates}`)
     return dates;
 }
 
@@ -102,4 +104,10 @@ export const splitIntoEqualChunks = (stocks) => {
 
 export const formatFillingDate = (date) => {
     return moment(date).format("YYYY-MM-DD")
+}
+
+export const estimatedRunTime = (numOfStocks) => {
+    const numOfApiCalls = 8
+    const runtimeInsec = (numOfStocks * numOfApiCalls) / config.fmpApi.maxRequestsPerSecond
+    return moment.utc(runtimeInsec*1000).format('HH:mm:ss');
 }

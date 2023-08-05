@@ -9,7 +9,7 @@ const config = {
 
   fmpApi: {
     baseUrl : process.env.FMP_BASE_URL,
-    maxRequestsPerSecond: 4,
+    maxRequestsPerSecond: 3,
     apiKey: process.env.FMP_API_KEY
   },
 

@@ -10,7 +10,7 @@ const { fmpApi } = config;
 class FmpService {
     constructor() {
         this.instance = rateLimit(axios.create({ baseURL: fmpApi.baseUrl }), 
-        { maxRPS: fmpApi.maxRequestsPerSecond });
+        { maxRequests: fmpApi.maxRequestsPerSecond, perMilliseconds: 1000 });
         this.instance.interceptors.request.use((config) => {
             config.params = config.params || {};
             config.params['apikey'] = process.env.FMP_API_KEY
@@ -60,7 +60,6 @@ class FmpService {
 
     async getHistoricalStockPrice(symbol, range) {
         const url = `historical-price-full/${symbol}?from=${range.startDate.format("YYYY-MM-DD")}&to=${range.endDate.format("YYYY-MM-DD")}`;
-        console.log({ url })
         const response = await this.instance.get(url);
         return response.data;
     }
