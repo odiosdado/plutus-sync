@@ -4,7 +4,7 @@ resource "google_cloud_run_service" "default" {
   template {
     spec {
       containers {
-        image = "gcr.io/plutus-273220/plutus-sync"
+        image = "gcr.io/plutus-273220/plutus-sync:latest"
         volume_mounts {
           name       = "secrets-volume"
           mount_path = "/secrets"
