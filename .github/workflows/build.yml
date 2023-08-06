@@ -56,10 +56,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     steps:
+      - uses: actions/checkout@v2
       - name: Set outputs
         id: vars
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-      - uses: actions/checkout@v2
       - uses: google-github-actions/setup-gcloud@main
       - uses: RafikFarhad/push-to-gcr-github-action@v4
         with:
