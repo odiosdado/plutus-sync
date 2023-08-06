@@ -7,10 +7,29 @@ on:
   pull_request:
 
 jobs:
+  build-and-push-to-gcr:
+    name: 'Build and push to GCR'
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set outputs
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - uses: google-github-actions/setup-gcloud@main
+      - uses: RafikFarhad/push-to-gcr-github-action@v4
+        with:
+          gcloud_service_key: ${{ secrets.GCLOUD_SERVICE_KEY }}
+          registry: gcr.io
+          project_id: plutus-273220
+          image_name: plutus-sync
+          image_tag: ${{ steps.vars.outputs.sha_short }}
+          context: ./node
   terraform:
     name: 'Apply Terraform on GCP'
     runs-on: ubuntu-latest
     environment: production
+    needs: build-and-push-to-gcr
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -50,22 +69,3 @@ jobs:
     - name: Terraform Apply
       if: github.ref == 'refs/heads/master' && github.event_name == 'push'
       run: terraform apply -auto-approve -var plutus_image_tag=${{ steps.vars.outputs.sha_short }}
-
-  build-and-push-to-gcr:
-    name: 'Build and push to GCR'
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set outputs
-        id: vars
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-      - uses: google-github-actions/setup-gcloud@main
-      - uses: RafikFarhad/push-to-gcr-github-action@v4
-        with:
-          gcloud_service_key: ${{ secrets.GCLOUD_SERVICE_KEY }}
-          registry: gcr.io
-          project_id: plutus-273220
-          image_name: plutus-sync
-          image_tag: ${{ steps.vars.outputs.sha_short }}
-          context: ./node
