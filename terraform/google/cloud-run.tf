@@ -18,7 +18,7 @@ resource "google_cloud_run_service" "default" {
           value = "/secrets/plutus-key.json"
         }
         env {
-          name = "FMP_EXCHANGES"
+          name  = "FMP_EXCHANGES"
           value = "NASDAQ,NYSE,AMEX"
         }
         env {
