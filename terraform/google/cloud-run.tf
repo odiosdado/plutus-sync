@@ -4,7 +4,7 @@ resource "google_cloud_run_service" "default" {
   template {
     spec {
       containers {
-        image = "gcr.io/plutus-273220/plutus-sync:latest"
+        image = "gcr.io/plutus-273220/plutus-sync:${var.plutus_image_tag}"
         volume_mounts {
           name       = "secrets-volume"
           mount_path = "/secrets"
@@ -16,6 +16,10 @@ resource "google_cloud_run_service" "default" {
         env {
           name  = "GOOGLE_APPLICATION_CREDENTIALS"
           value = "/secrets/plutus-key.json"
+        }
+        env {
+          name = "FMP_EXCHANGES"
+          value = "NASDAQ,NYSE,AMEX"
         }
         env {
           name = "FMP_API_KEY"

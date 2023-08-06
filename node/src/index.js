@@ -11,6 +11,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/run-sync', (req, res) => {
+  console.log({ module })
   const { start, end, test } = req.body;
   runSync(start, end, test);
   res.json({ message: `Sync started for dates ${start} to ${end}, test? ${test}`})

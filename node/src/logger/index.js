@@ -1,3 +1,4 @@
+const path = require('path');
 import Winston from 'winston'
 import config from '../constants/config'
 

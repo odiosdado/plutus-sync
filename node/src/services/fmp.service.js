@@ -9,13 +9,26 @@ const { fmpApi } = config;
 
 class FmpService {
     constructor() {
-        this.instance = rateLimit(axios.create({ baseURL: fmpApi.baseUrl }), 
-        { maxRequests: fmpApi.maxRequestsPerSecond, perMilliseconds: 1000 });
-        this.instance.interceptors.request.use((config) => {
-            config.params = config.params || {};
-            config.params['apikey'] = process.env.FMP_API_KEY
-            return config;
-        });
+        this.instance = rateLimit(
+            axios.create({ 
+                baseURL: fmpApi.baseUrl 
+            }),
+            {
+                maxRequests: fmpApi.maxRequestsPerSecond, 
+                perMilliseconds: 1000 
+            });
+        this.instance.interceptors.request.use(
+            request => {
+                logger.debug({
+                    method: request.method, 
+                    baseURL: request.baseUrl, 
+                    url: request.url 
+                })
+                request.params = request.params || {};
+                request.params['apikey'] = process.env.FMP_API_KEY
+                return request;
+            }
+        );
         this.instance.interceptors.response.use(
             response => {
                 if (response.data['Error Message']) {
@@ -37,8 +50,17 @@ class FmpService {
         return response.data
     }
 
+    async getFilteredStockList() {
+        const response = await this.getAvailableTraded()
+        return response.filter(x => config.fmpApi.exchanges.includes(x.exchangeShortName) && x.type == "stock")
+    }
+
+    async getAvailableTraded() {
+        const response = await this.instance.get(`available-traded/list`);
+        return response.data
+    }
+
     async getIncomeStatement(symbol, period) {
-        logger.debug(`income-statement/${symbol}`);
         const response = await this.instance.get(`income-statement/${symbol}?period=${period}`);
         return response.data;
     }
