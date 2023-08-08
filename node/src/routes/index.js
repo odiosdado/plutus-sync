@@ -73,7 +73,7 @@ export async function runSync(start, end, test) {
 
 const updateMetrics = (stocksCompleted, finalChunk) => {
   metrics.stocksCompleted = metrics.stocksCompleted + stocksCompleted
-  metrics.percentComplete = Number((metrics.stocksCompleted / metrics.numOfStocks)/100).toLocaleString(undefined, { style: 'percent', minimumFractionDigits: 3 });
+  metrics.percentComplete = Number((metrics.stocksCompleted / metrics.numOfStocks)).toLocaleString(undefined, { style: 'percent', minimumFractionDigits: 3 });
   const diff = moment.duration(moment(new Date()).diff(metrics.startTime));
   metrics.actualRunTime = moment.utc(diff.asMilliseconds()).format('HH:mm:ss');
   metrics.complete = finalChunk
